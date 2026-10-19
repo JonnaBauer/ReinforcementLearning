@@ -105,7 +105,7 @@ def getUserAction(state, actionFunction):
 # Exercise 1: Implement "return" computation
 def runEpisode(agent, environment, discount, decision, display, message, pause, episode):
   returns = 0
-  discount_factor= 1.0
+  discount_factor= 0.9
   environment.reset()
   message("BEGINNING EPISODE: "+str(episode)+"\n")
   while True:
