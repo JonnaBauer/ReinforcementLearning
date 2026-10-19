@@ -288,11 +288,17 @@ if __name__ == '__main__':
 
   # Exercise 1: implement the mean and std of the value estimation for the start state and print it out
   #  check what runEpisode returns
+  episode_return=[]
 
   for episode in range(1, opts.episodes+1):
-    runEpisode(a, env, opts.discount, decisionCallback, displayCallback, messageCallback, pauseCallback, episode)
+    r=runEpisode(a, env, opts.discount, decisionCallback, displayCallback, messageCallback, pauseCallback, episode)
+    episode_return.append(r)
   if opts.episodes > 0:
     # print here
-    pass
+    mean= sum(episode_return)/len(episiode_return)
+    var=(sum(r-mean)**2 for r in episode_return)/ len(episode_return))
+    std= var**0.5
+    print("mean: %.4f" %mean)
+    print("std: %.4f" %std)
 
   print()
