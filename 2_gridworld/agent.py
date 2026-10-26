@@ -94,7 +94,7 @@ class ValueIterationAgent(Agent):
               reward += prob * (immediate_reward + self.discount * estValue)
             values_iteration[state] = max(values_iteration[state], reward)
       self.values = values_iteration
-    
+    print("Start state value after {} iterations: {}".format(iterations, self.values.getCount(self.mdp.getStartState())))
   
 
 
