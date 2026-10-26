@@ -41,3 +41,7 @@
 # the optimal value by choosing actions that would mazimize expected
 # future rewards, while the empirical returns are based on the random
 # policy.
+
+# Go and create your own gridworld in gridworld.py. Check the value function
+# etc. for different noise, discount and livingReward.
+# Created CrazyGrid
