@@ -4,6 +4,7 @@ import mdp
 import environment
 import util
 import optparse
+import numpy as np
 
 from gridworldClass import Gridworld
 
@@ -105,6 +106,8 @@ def getUserAction(state, actionFunction):
 # Exercise 1: Implement "return" computation
 def runEpisode(agent, environment, discount, decision, display, message, pause, episode):
   returns = 0
+  currentStep = 0
+  print(f"discount: {discount}")
   environment.reset()
   message("BEGINNING EPISODE: "+str(episode)+"\n")
   while True:
@@ -118,7 +121,7 @@ def runEpisode(agent, environment, discount, decision, display, message, pause, 
     actions = environment.getPossibleActions(state)
     if len(actions) == 0:
       message("EPISODE "+str(episode)+" COMPLETE: RETURN WAS "+str(returns)+"\n")
-      return 0  # TODO: IMPLEMENT "return" obtained in the episode
+      return returns  # TODO: IMPLEMENT "return" obtained in the episode
 
     # GET ACTION (USUALLY FROM AGENT)
     action = decision(state)
@@ -134,8 +137,10 @@ def runEpisode(agent, environment, discount, decision, display, message, pause, 
 
     # UPDATE LEARNER
     agent.update(state, action, nextState, reward)
-
     # TODO: make sure you compute the returns
+    # returns += discount_at_t * reward
+    returns += reward * (discount ** currentStep)
+    currentStep += 1
 
 
 
@@ -286,10 +291,10 @@ if __name__ == '__main__':
   # Exercise 1: implement the mean and std of the value estimation for the start state and print it out
   #  check what runEpisode returns
 
+  returns = []
   for episode in range(1, opts.episodes+1):
-    runEpisode(a, env, opts.discount, decisionCallback, displayCallback, messageCallback, pauseCallback, episode)
+    returns.append(runEpisode(a, env, opts.discount, decisionCallback, displayCallback, messageCallback, pauseCallback, episode))
   if opts.episodes > 0:
-    # print here
-    pass
+    print(f'Mean: {np.mean(returns)}, Std: {np.std(returns)}')
 
-  print()
+
