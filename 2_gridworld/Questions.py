@@ -45,3 +45,25 @@
 # Go and create your own gridworld in gridworld.py. Check the value function
 # etc. for different noise, discount and livingReward.
 # Created CrazyGrid
+
+# Initial values: noise = 0.2, discount = 0.9 livingReward = 0.0
+# It converges to the +3 reward state.
+
+# r = -1 
+# It coverges to the closest +1 reward state.
+# r  = 0.5
+# It bumps into the walls and avoids to move to the finishing states.
+# r = 1 
+# It gives the same results as r = 0.5
+
+# n = 0.0
+# n = 0.5
+# n = 0.8
+# The noise does not affect the policy, it still converges to the +3 reward state.
+
+# discount = 0.1
+# The agent prefers the closest +1 reward state.
+# discount = 0.7
+# The agent prefers the +3 reward state.
+# discount = 0.9999
+# The agent prefers reaching to the +4 reward state.
