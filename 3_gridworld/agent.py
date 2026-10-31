@@ -258,6 +258,8 @@ class PolicyIterationAgent(Agent):
               if actions:
                   self.policy[state] = actions[0]
       for i in range(iterations):
+
+        # Policy Evaluation
         while True:
           delta = 0
           for state in states:
@@ -271,7 +273,67 @@ class PolicyIterationAgent(Agent):
             delta = max(delta, abs(old_value - new_value))
           if delta < theta:
             break
+
+        # Policy Improvement
+        policy_stable = True
+        for state in states:
+          if self.mdp.isTerminal(state):
+            continue
+
+          old_action = self.policy.get(state)
+          actions = self.mdp.getPossibleActions(state)
+          if not actions:
+            continue
+
+          best_action = None
+          best_value = float('-inf')
+          for action in actions:
+            q_val = self.getQValue(state, action)
+            if q_val > best_value:
+              best_value = q_val
+              best_action = action
+
+          self.policy[state] = best_action
+
+          if old_action != best_action:
+            policy_stable = False
+
+        if policy_stable:
+          break
           
 
     
       print("Start state value after {} iterations: {}".format(i + 1,self.values.getCount(self.mdp.getStartState())))
+
+  def getValue(self, state):
+    """
+    Look up the value of the state.
+    """
+    return self.values[state]
+
+  def getQValue(self, state, action):
+    """
+    Look up the q-value of the state action pair.
+    """
+    TSP = self.mdp.getTransitionStatesAndProbs(state, action)
+    reward = 0
+    for nextState, prob in TSP:
+      estValue = self.values.getCount(nextState)
+      immediate_reward = self.mdp.getReward(state, action, nextState)
+      reward += prob * (immediate_reward + self.discount * estValue)
+    return reward
+
+  def getPolicy(self, state):
+    """
+    Look up the policy's recommendation for the state.
+    """
+    return self.policy.get(state, None)
+
+  def getAction(self, state):
+    """
+    Return the action recommended by the policy.
+    """
+    return self.getPolicy(state)
+
+  def update(self, state, action, nextState, reward):
+    pass
