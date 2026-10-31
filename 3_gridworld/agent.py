@@ -62,11 +62,8 @@ class RandomAgent(Agent):
     pass
 
 
-################################################################################
-# Exercise 2
 
 class ValueIterationAgent(Agent):
-
   def __init__(self, mdp, discount = 0.9, iterations = 100):
     """
     Your value iteration agent should take an mdp on
@@ -76,9 +73,27 @@ class ValueIterationAgent(Agent):
     self.mdp = mdp
     self.discount = discount
     self.iterations = iterations
-
-    raise ValueError("Your code here.")
-
+    self.values = util.Counter()
+    states = self.mdp.getStates()
+    for i in range(iterations):
+      values_iteration = util.Counter()
+      for state in states:
+        if self.mdp.isTerminal(state):
+          values_iteration[state] = 0
+        else:
+          actions = self.mdp.getPossibleActions(state)
+          values_iteration[state] = float('-inf')
+          for action in actions:
+            TSP = self.mdp.getTransitionStatesAndProbs(state, action)
+            reward = 0
+            for nextState, prob in TSP:
+              estValue = self.values.getCount(nextState)
+              immediate_reward =self.mdp.getReward(state, action, nextState)
+              reward += prob * (immediate_reward + self.discount * estValue)
+            values_iteration[state] = max(values_iteration[state], reward)
+      self.values = values_iteration
+    print("Start state value after {} iterations: {}".format(iterations, self.values.getCount(self.mdp.getStartState())))
+  
 
 
   def getValue(self, state):
@@ -86,7 +101,8 @@ class ValueIterationAgent(Agent):
     Look up the value of the state (after the indicated
     number of value iteration passes).
     """
-    raise ValueError("Your code here.")
+
+    return self.values[state]
 
 
 
@@ -98,8 +114,13 @@ class ValueIterationAgent(Agent):
     necessarily create this quantity and you may have
     to derive it on the fly.
     """
-
-    raise ValueError("Your code here.")
+    TSP = self.mdp.getTransitionStatesAndProbs(state, action)
+    reward = 0
+    for nextState, prob in TSP:
+      estValue = self.values.getCount(nextState)
+      immediate_reward =self.mdp.getReward(state, action, nextState)
+      reward += prob * (immediate_reward + self.discount * estValue)
+    return reward
 
 
 
@@ -108,8 +129,18 @@ class ValueIterationAgent(Agent):
     Look up the policy's recommendation for the state
     (after the indicated number of value iteration passes).
     """
-
-    raise ValueError("Your code here.")
+    actions = self.mdp.getPossibleActions(state)
+    if len(actions) == 0:
+      return None
+    best_action = None
+    best_value = float('-inf')
+    for action in actions:
+      q_value = self.getQValue(state, action)
+      if q_value > best_value:
+        best_value = q_value
+        best_action = action
+    return best_action
+  
 
 
 
@@ -206,3 +237,41 @@ class QLearningAgent(Agent):
     """
 
     raise ValueError("Your code here.")
+
+  
+####################################################
+
+
+class PolicyIterationAgent(Agent):
+  def __init__(self, mdp, discount=0.9, iterations=100):
+      self.mdp = mdp
+      self.discount = discount
+      self.iterations = iterations
+      self.values = util.Counter()
+      self.policy = {}
+      states = self.mdp.getStates()
+      theta = 0.0000001
+
+      for state in states:
+          if not self.mdp.isTerminal(state):
+              actions = self.mdp.getPossibleActions(state)
+              if actions:
+                  self.policy[state] = actions[0]
+      for i in range(iterations):
+        while True:
+          delta = 0
+          for state in states:
+            if self.mdp.isTerminal(state):
+              self.values[state] = 0
+              continue
+            action = self.policy[state]
+            old_value = self.values.getCount(state)
+            new_value = self.getQValue(state,action)
+            self.values[state] = new_value
+            delta = max(delta, abs(old_value - new_value))
+          if delta < theta:
+            break
+          
+
+    
+      print("Start state value after {} iterations: {}".format(i + 1,self.values.getCount(self.mdp.getStartState())))
