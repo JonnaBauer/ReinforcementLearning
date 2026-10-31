@@ -273,5 +273,3 @@ class PolicyIterationAgent(Agent):
             break
           
 
-    
-      print("Start state value after {} iterations: {}".format(i + 1,self.values.getCount(self.mdp.getStartState())))
