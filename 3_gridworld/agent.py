@@ -274,9 +274,9 @@ class PolicyIterationAgent(Agent):
           if delta < theta:
             break
 
-        # print start state value
-        start_state = self.mdp.getStartState()
-        print(f"Start state value after iteration {i+1}: {self.values.getCount(start_state)}")
+        # # print start state value
+        # start_state = self.mdp.getStartState()
+        # print(f"Start state value after iteration {i+1}: {self.values.getCount(start_state)}")
 
         # Policy Improvement
         policy_stable = True
@@ -305,7 +305,9 @@ class PolicyIterationAgent(Agent):
         if policy_stable:
           break
           
-
+        # print start state value
+        start_state = self.mdp.getStartState()
+        print(f"Start state value after iteration {i+1}: {self.values.getCount(start_state)}")
     
       print("Final Start state value after {} iterations: {}".format(i + 1,self.values.getCount(self.mdp.getStartState())))
 
